@@ -31,3 +31,5 @@ DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/util/btyacc/BtYACC
 MAIN_DEPENDENCY ${path}
 )
 endfunction (BtYaccComp)
+
+add_subdirectory (eval)
