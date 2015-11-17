@@ -15,3 +15,6 @@
 
 /* Define to 1 to enable backtracking extension */
 #define YYBTYACC 1
+
+#define YY_NO_LEAKS 1
+#define NO_LEAKS 1

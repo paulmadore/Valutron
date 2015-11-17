@@ -1,5 +1,6 @@
 %{
 #include <cstring>
+#include "evctx.h"
 #include "eval.tab.i"
 #include "eval.tab.h"
 %}
@@ -9,13 +10,15 @@ WS          [ \t\v\n\r\f]+
 NUM         [0-9]
 INT10       ("-"?){NUM}+
 LETTER      [a-zA-Z]|"!"|"$"|"%"|"&"|"*"|"+"|"-"|"."|"/"|":"|"<"|"="|">"|"?"|"@"|"^"|"_"|"~"
-IDENTIFIER  {LETTER}({NUM}|{LETTER})*
+IDENTIFIER  (({NUM}|{LETTER})*)
 
 %option noyywrap
 %option reentrant bison-bridge bison-locations
 %option yylineno
 
 %{
+
+#define YY_EXTRA_TYPE EvalContext *
 
 #define YY_STORE_INT(x) yylval->I = x;
 #define YY_STORE_STR() yylval->C = strdup(yytext);
@@ -47,6 +50,18 @@ IDENTIFIER  {LETTER}({NUM}|{LETTER})*
 "#t"                                { YY_STORE_INT(1); return BOOLE; }
 "#f"                                { YY_STORE_INT(0); return BOOLE; }
 
+"("                                 { YY_STORE_STR(); return '('; }
+")"                                 { YY_STORE_STR(); return ')'; }
+"."                                 { YY_STORE_STR(); return '.'; }
+
+"\\'"                               { return ESCQUOTE; }
+"'"                                 { return QUOTE; }
+"#'"                                { return SHARPQUOTE; }
+"`"                                 { return BACKQUOTE; }
+","                                 { return COMMA; }
+",@"                                { return COMMAAT; }
+
+
 {INT10}                             {
                                         YY_STORE_INT(strtol(yytext, 0, 10));
                                         return I_LITERAL;
@@ -61,10 +76,11 @@ IDENTIFIER  {LETTER}({NUM}|{LETTER})*
 
 #include <stdio.h>
 #include "eval.yy.h"
+#include "misc.h"
 
 void evalerror(YYLTYPE loc, yyscan_t yyscanner, const char *s)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
     fflush(stdout);
-    fprintf(stderr, "%d:%d (%s): %s\n", loc.last_line, loc.last_column, yytext, s);
+    fprintf(stderr, KBLD "%d:%d:" KRED " %s\n" KNRM "%s\n", loc.first_line, loc.first_column, s, yytext);
 }

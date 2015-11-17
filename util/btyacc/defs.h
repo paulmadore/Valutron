@@ -1,8 +1,6 @@
 /* $Id: defs.h,v 1.51 2014/10/02 22:38:13 tom Exp $ */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include "config.h"
 
 #include <limits.h>
 #include <stdlib.h>

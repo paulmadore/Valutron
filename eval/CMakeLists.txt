@@ -4,7 +4,8 @@ project (eval)
 FlexComp(${PROJECT_SOURCE_DIR}/eval.l)
 BtYaccComp(${PROJECT_SOURCE_DIR}/eval.y)
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
+include_directories(${CMAKE_CURRENT_BINARY_DIR}
+                    ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_executable (eval eval.cxx
                 ${PROJECT_BINARY_DIR}/eval.yy.cxx
