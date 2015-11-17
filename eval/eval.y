@@ -1,21 +1,30 @@
 %{
-#include "eval.yy.h"
+typedef void * yyscan_t;
 %}
+
+%pure-parser
+
+%lex-param   { yyscan_t scanner }
+%parse-param { yyscan_t scanner }
+
+%union {
+    long I;
+    char *C;
+}
+
+%token <C> LBRACKET RBRACKET STRINGLITERAL
+%token <I> ILITERAL
 
 %start translunit
 
 %%
 
 translunit
-    : /* ε */
+    : LBRACKET/* ε */
     ;
 
 %%
 
-#include <stdio.h>
+#include "eval.yy.h"
 
-void evalerror(YYLTYPE loc, const char *s)
-{
-    fflush(stdout);
-    fprintf(stderr, "%d:%d (%s): %s\n", evallineno, loc.last_column, yylval, s);
-}
+void evalerror(YYLTYPE loc, yyscan_t yyscanner, const char *s);
