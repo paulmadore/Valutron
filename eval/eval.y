@@ -14,8 +14,8 @@ typedef void * yyscan_t;
 }
 
 %token <V> L_BRACKET R_BRACKET
-%token <C> STRING_LITERAL
-%token <I> I_LITERAL
+%token <C> STRING_LITERAL IDENTIFIER
+%token <I> BOOLE I_LITERAL
 
 %destructor { if ($$) { free ($$); $$ = NULL; } } <C>
 
