@@ -24,10 +24,10 @@ GET_FILENAME_COMPONENT (file ${path} NAME_WE)
 add_custom_command(
 OUTPUT ${PROJECT_BINARY_DIR}/${file}.tab.h
     ${PROJECT_BINARY_DIR}/${file}.tab.cxx
-COMMAND ${CMAKE_CURRENT_BINARY_DIR}/util/btyacc/BtYACC
-ARGS -BdLtvl -b ${file} -o ${PROJECT_BINARY_DIR}/${file}.tab.cxx
+COMMAND ${CMAKE_BINARY_DIR}/util/btyacc/BtYACC
+ARGS -BdLtvli -b ${file} -o ${PROJECT_BINARY_DIR}/${file}.tab.cxx
     -p ${file} --verbose ${path}
-DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/util/btyacc/BtYACC
+DEPENDS ${CMAKE_BINARY_DIR}/util/btyacc/BtYACC
 MAIN_DEPENDENCY ${path}
 )
 endfunction (BtYaccComp)
