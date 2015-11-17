@@ -25,7 +25,7 @@ add_custom_command(
 OUTPUT ${PROJECT_BINARY_DIR}/${file}.tab.h
     ${PROJECT_BINARY_DIR}/${file}.tab.cxx
 COMMAND ${CMAKE_BINARY_DIR}/util/btyacc/BtYACC
-ARGS -BdLtvli -b ${file} -o ${PROJECT_BINARY_DIR}/${file}.tab.cxx
+ARGS -dLtvli -b ${file} -o ${PROJECT_BINARY_DIR}/${file}.tab.cxx
     -p ${file} --verbose ${path}
 DEPENDS ${CMAKE_BINARY_DIR}/util/btyacc/BtYACC
 MAIN_DEPENDENCY ${path}

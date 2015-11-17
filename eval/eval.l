@@ -8,7 +8,7 @@ NUM             ([0-9])
 ALPHA           ([a-zA-Z])
 ALPHNUM         ({LETTER}|{DIGIT})
 WS              ([ \t\v\n\f])
-NONBLANK        ([^ {WS}])
+NONBLANK        ([^ {WS}]*)
 
 %option noyywrap
 %option reentrant bison-bridge bison-locations
@@ -18,27 +18,30 @@ NONBLANK        ([^ {WS}])
 
 #define YY_STORE_STR() yylval->C = strdup(yytext);
 
-#define YY_USER_ACTION { \
-    int curr_line = 1; \
+#define YY_USER_INIT \
+    yylloc->last_line = 0; \
+    yylloc->last_column = 0;
+
+#define YY_USER_ACTION \
+    yylloc->first_line = yylloc->last_line; \
+    yylloc->first_column = yylloc->last_column; \
     \
-    yylloc->first_line = yylineno; \
-    yylloc->first_column = yycolumn; \
-    \
-    for (char * s = yytext; *s != '\0'; s++) \
+    for(int i = 0; yytext[i] != '\0'; i++) \
     { \
-        if(*s == '\n') \
+        if(yytext[i] == '\n') \
         { \
-            curr_line++; yylineno++; \
-            yycolumn = 1; \
+            yylloc->last_line++; \
+            yylloc->last_column = 0; \
         } \
-        else yycolumn++; \
-    } \
-    yylloc->last_line = yylineno; \
-    yylloc->last_column = yycolumn- 1; \
+        else \
+            yylloc->last_column++; \
     }
 %}
 
 %%
+
+(\"([^"\\\n]|{NONBLANK})*\"{WS}*)+	{ YY_STORE_STR(); return STRING_LITERAL; }
+
 
 %%
 

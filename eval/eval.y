@@ -8,12 +8,14 @@ typedef void * yyscan_t;
 %parse-param { yyscan_t scanner }
 
 %union {
+    char * C;
     long I;
-    char *C;
+    void * V;
 }
 
-%token <C> LBRACKET RBRACKET STRINGLITERAL
-%token <I> ILITERAL
+%token <V> L_BRACKET R_BRACKET
+%token <C> STRING_LITERAL
+%token <I> I_LITERAL
 
 %destructor { if ($$) { free ($$); $$ = NULL; } } <C>
 
@@ -22,7 +24,7 @@ typedef void * yyscan_t;
 %%
 
 translunit
-    : 'test' LBRACKET/* ε */
+    : STRING_LITERAL  'f'/* ε */
     ;
 
 %%
