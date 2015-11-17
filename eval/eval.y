@@ -15,12 +15,14 @@ typedef void * yyscan_t;
 %token <C> LBRACKET RBRACKET STRINGLITERAL
 %token <I> ILITERAL
 
+%destructor { if ($$) { free ($$); $$ = NULL; } } <C>
+
 %start translunit
 
 %%
 
 translunit
-    : LBRACKET/* ε */
+    : 'test' LBRACKET/* ε */
     ;
 
 %%
