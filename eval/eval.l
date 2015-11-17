@@ -3,6 +3,8 @@
 #include "evctx.h"
 #include "eval.tab.i"
 #include "eval.tab.h"
+
+void evalerror(YYLTYPE loc, yyscan_t yyscanner, const char *s);
 %}
 
 ES          (\\(['"\?\\abfnrtv]|[0-7]{1,3}|x[a-fA-F0-9]+))
@@ -70,7 +72,7 @@ IDENTIFIER  (({NUM}|{LETTER})*)
 {IDENTIFIER}                        { YY_STORE_STR(); return IDENTIFIER; }
 
 {WS}*                               { ; }
-.                                   { printf("<%s>\n", yytext); YY_FATAL_ERROR("Unrecognised token"); }
+.                                   { printf("<%s>\n", yytext); evalerror (*yylloc, yyg, "unrecognised token"); }
 
 %%
 
