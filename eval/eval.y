@@ -38,9 +38,9 @@ translunit
     ;
 
 atom
-    : STRING_LITERAL { $$ = new ScmValue((std::string *)$1); }
-    | I_LITERAL { $$ = new ScmValue($1); }
-    | IDENTIFIER { $$ = new ScmValue((std::string *)$1); } /* handle identifier differently? */
+    : STRING_LITERAL { $$ = new ScmString($1); }
+    | I_LITERAL { $$ = new ScmInteger($1); }
+    | IDENTIFIER { $$ = new ScmString($1); } /* handle identifier differently? */
     ;
 
 s_expr
@@ -50,13 +50,13 @@ s_expr
 
 s_expr_list
     : s_expr
-    | s_expr_list s_expr { $$ = new ScmValue($1, $2); }
+    | s_expr_list s_expr { $$ = new ScmPair($1, $2); }
     ;
 
 list
     : '(' ')' { $$ = new ScmValue(); }
     | '(' s_expr_list ')' { $$ = $2; }
-    | '(' s_expr_list '.' s_expr ')' { $$ = new ScmValue($2, $4); $$->print(); }
+    | '(' s_expr_list '.' s_expr ')' { $$ = new ScmPair($2, $4); }
     | QUOTE s_expr
     | ESCQUOTE s_expr
     | SHARPQUOTE s_expr

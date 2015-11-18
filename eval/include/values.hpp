@@ -5,50 +5,76 @@
 #include <vector>
 #include <utility>
 
-		enum ScmType {
-			UNDEF,   PAIR,    SYMBOL,   STRING,
-			VECTOR,  INTEGER, RATIONAL, REAL,
-			BOOLEAN,
-		};
+enum ScmType
+{
+    UNDEF,
+    PAIR,
+    SYMBOL,
+    STRING,
+    VECTOR,
+    INTEGER,
+    RATIONAL,
+    REAL,
+    BOOLEAN,
+};
 
-class ScmValue {
-	public:
-		typedef std::pair<ScmValue, ScmValue> Cons;
+class ScmValue
+{
+  public:
+    typedef std::pair<ScmValue *, ScmValue *> Cons;
+    ScmType tag;
 
-                ScmType tag;
+    ScmValue ()
+    {
+        tag        = UNDEF;
+        references = 1;
+    };
+    ScmValue (ScmType tagged) : tag (tagged) {}
+    virtual ~ScmValue (){};
 
-		union Data {
-			Cons *valpair;
-			long integer;
-			double real;
-			bool boolean;
-			std::string *str;
-			// and more...
-		} data;
+    virtual void print (){};
 
-                ScmValue( )         { tag = UNDEF; references = 1; };
-                ScmValue (ScmValue * one, ScmValue * two) { references = 1; set((Cons *)new Cons(one, two)); }
-                template <typename T> ScmValue( T val ){ references = 1; set( (T)val ); }
-                ~ScmValue( );
+    ScmValue * incRefs ();
+    void decRefs ();
+    unsigned getRefs ();
 
-		void set( Cons *vals );
-		void set( std::string *str );
-		void set( enum ScmType tagged, std::string *str );
-		void set( long n );
-		void set( double r );
-		void set( ScmValue val );
-		void set( bool boolean );
-		void set( enum ScmType tagged, union Data new_data );
-		// and so on...
+  protected:
+    unsigned references;
+};
 
-                void print();
+class ScmPair : public ScmValue
+{
+  public:
+    Cons val;
+    ScmPair (Cons pair) : ScmValue (PAIR), val (pair) {}
+    ScmPair (ScmValue * one, ScmValue * two) : ScmValue (PAIR), val (one, two)
+    {
+    }
+    void print ();
+};
 
-		ScmValue *incRefs( );
-		void     decRefs( );
-		unsigned getRefs( );
+class ScmInteger : public ScmValue
+{
+  public:
+    long val;
+    ScmInteger (long integer) : ScmValue (INTEGER), val (integer) {}
+    void print ();
+};
 
-	private:
-		unsigned references;
+class ScmString : public ScmValue
+{
+  public:
+    std::string val;
+    ScmString (std::string str) : ScmValue (STRING), val (str) {}
+    void print ();
+};
+
+class ScmBoole : public ScmValue
+{
+  public:
+    bool val;
+    ScmBoole (bool boole) : ScmValue (BOOLEAN), val (boole) {}
+    void print ();
 };
 
 #endif
