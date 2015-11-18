@@ -33,14 +33,14 @@ typedef void * yyscan_t;
 %%
 
 translunit
-    : s_expr
+    : s_expr { $1->print(); }
     | /* ε */
     ;
 
 atom
-    : STRING_LITERAL { $$ = new ScmValue($1); }
+    : STRING_LITERAL { $$ = new ScmValue((std::string *)$1); }
     | I_LITERAL { $$ = new ScmValue($1); }
-    | IDENTIFIER { $$ = new ScmValue($1); }
+    | IDENTIFIER { $$ = new ScmValue((std::string *)$1); } /* handle identifier differently? */
     ;
 
 s_expr
@@ -56,7 +56,7 @@ s_expr_list
 list
     : '(' ')' { $$ = new ScmValue(); }
     | '(' s_expr_list ')' { $$ = $2; }
-    | '(' s_expr_list '.' s_expr ')' { $$ = new ScmValue($2, $4); }
+    | '(' s_expr_list '.' s_expr ')' { $$ = new ScmValue($2, $4); $$->print(); }
     | QUOTE s_expr
     | ESCQUOTE s_expr
     | SHARPQUOTE s_expr

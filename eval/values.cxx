@@ -60,6 +60,36 @@ void ScmValue::set( enum  ScmValue::Tagged tagged,
     data = new_data;
 }
 
+void ScmValue::print()
+{
+    switch (tag)
+    {
+    case STRING:
+        printf("\"%s\"", data.str->c_str());
+        break;
+    case INTEGER:
+        printf("%ld", data.integer);
+        break;
+    case BOOLEAN:
+        printf("#%c", data.boolean ? 't' : 'f');
+        break;
+    case PAIR:
+    {
+        ScmValue * dat = this;
+
+        dat->data.valpair->first.print();
+
+        while (dat->tag == PAIR && (dat = &dat->data.valpair->second)->tag == PAIR)
+            dat->data.valpair->first.print();
+
+        dat->data.valpair->second.print();
+        break;
+    }
+    default:;
+    }
+}
+
+
 // reference counting functions
 
 // incRefs returns a pointer to the current class to make reasoning about
