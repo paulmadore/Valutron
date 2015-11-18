@@ -29,7 +29,7 @@ void ScmValue::set( std::string *str ){
 	data.str = str;
 }
 
-void ScmValue::set( enum ScmValue::Tagged tagged, std::string *str ){
+void ScmValue::set( enum ScmType tagged, std::string *str ){
 	tag = tagged;
 	data.str = str;
 }
@@ -54,7 +54,7 @@ void ScmValue::set( ScmValue val ){
 	data = val.data;
 }
 
-void ScmValue::set( enum  ScmValue::Tagged tagged,
+void ScmValue::set( enum  ScmType tagged,
                     union ScmValue::Data   new_data ){
     tag  = tagged;
     data = new_data;
@@ -77,12 +77,26 @@ void ScmValue::print()
     {
         ScmValue * dat = this;
 
-        dat->data.valpair->first.print();
-
-        while (dat->tag == PAIR && (dat = &dat->data.valpair->second)->tag == PAIR)
+        printf ("(");
+        while (true)
+        {
             dat->data.valpair->first.print();
+            if (dat->data.valpair->second.tag == UNDEF)
+            {
+                printf(")");
+                break;
+            }
+            dat = &dat->data.valpair->second;
+            if (dat->tag != PAIR)
+            {
+                printf(" . ");
+                dat->print();
+                printf(")");
+                break;
+            }
+            printf(" ");
+        }
 
-        dat->data.valpair->second.print();
         break;
     }
     default:;
