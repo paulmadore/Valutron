@@ -24,9 +24,10 @@ class ScmValue {
 			// and more...
 		} data;
 
-		 ScmValue( )         { tag = UNDEF; references = 1; };
-		 ScmValue( auto val ){ references = 1; set( val ); }
-		~ScmValue( );
+                ScmValue( )         { tag = UNDEF; references = 1; };
+                ScmValue (ScmValue * one, ScmValue * two) { references = 1; set(new Cons(one, two)); }
+                template <typename T> ScmValue( T val ){ references = 1; set( val ); }
+                ~ScmValue( );
 
 		void set( Cons *vals );
 		void set( std::string *str );
