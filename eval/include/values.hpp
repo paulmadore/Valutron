@@ -7,14 +7,16 @@
 
 class ScmValue {
 	public:
+		typedef std::pair<ScmValue, ScmValue> Cons;
+
 		enum Tagged {
-			PAIR,   SYMBOL,  STRING,
-			VECTOR, INTEGER, RATIONAL,
-			REAL,   BOOLEAN,
+			UNDEF,   PAIR,    SYMBOL,   STRING,
+			VECTOR,  INTEGER, RATIONAL, REAL,
+			BOOLEAN,
 		} tag;
 
 		union Data {
-			std::pair<ScmValue, ScmValue> *valpair;
+			Cons *valpair;
 			long integer;
 			double real;
 			bool boolean;
@@ -22,9 +24,11 @@ class ScmValue {
 			// and more...
 		} data;
 
-		 ScmValue( );
+		 ScmValue( )         { tag = UNDEF; references = 1; };
+		 ScmValue( auto val ){ references = 1; set( val ); }
 		~ScmValue( );
 
+		void set( Cons *vals );
 		void set( std::string *str );
 		void set( enum Tagged tagged, std::string *str );
 		void set( long n );

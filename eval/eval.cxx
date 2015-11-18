@@ -39,6 +39,13 @@ int main (int argc, char * argv[])
     int returnValue = 0;
     char buffer[256];
 
+    // This is just an example of the value class, delete this when it's not needed
+    ScmValue *foo = new ScmValue( new ScmValue::Cons( true, new std::string( "asdf" )));
+    printf( "(#%c . \"%s\")\n",
+        (char[2]){'f', 't'}[foo->data.valpair->first.data.boolean],
+        foo->data.valpair->second.data.str->c_str( ) );
+    delete foo;
+
     while (returnValue != 99)
     {
         std::string prompt ("{ 0 } ok ");

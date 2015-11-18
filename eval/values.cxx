@@ -1,11 +1,29 @@
 #include <values.hpp>
 
-ScmValue::ScmValue( ){
-    references = 1;
+ScmValue::~ScmValue( ){
+	switch( tag ){
+		case PAIR:
+			delete data.valpair;
+			break;
+
+		case SYMBOL:
+		case STRING:
+			delete data.str;
+			break;
+
+		default:
+			break;
+	}
 }
 
 // A variety of setters for your convenience, using overloading
 // to determine the proper tag value.
+//void ScmValue::set( std::pair<ScmValue, ScmValue> *vals ){
+void ScmValue::set( Cons *vals ){
+	tag = PAIR;
+	data.valpair = vals;
+}
+
 void ScmValue::set( std::string *str ){
 	tag = STRING;
 	data.str = str;
