@@ -16,6 +16,7 @@ enum ScmType
     RATIONAL,
     REAL,
     BOOLEAN,
+    SCM_NULL,
 };
 
 class ScmValue
@@ -75,6 +76,13 @@ class ScmBoole : public ScmValue
     bool val;
     ScmBoole (bool boole) : ScmValue (BOOLEAN), val (boole) {}
     void print ();
+};
+
+class ScmNull : public ScmValue
+{
+  public:
+    ScmNull () : ScmValue (SCM_NULL) {}
+    void print () { }
 };
 
 #endif
