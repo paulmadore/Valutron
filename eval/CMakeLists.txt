@@ -11,5 +11,6 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}
                     ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 add_executable (eval eval.cxx
+                values.cxx
                 ${PROJECT_BINARY_DIR}/eval.yy.cxx
                 ${PROJECT_BINARY_DIR}/eval.tab.cxx)

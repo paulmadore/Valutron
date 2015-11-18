@@ -7,27 +7,39 @@
 
 class ScmValue {
 	public:
-		enum tagged_type {
+		enum Tagged {
 			PAIR,   SYMBOL,  STRING,
 			VECTOR, INTEGER, RATIONAL,
 			REAL,   BOOLEAN,
 		} tag;
 
-		union data {
-			std::pair<ScmValue *, ScmValue *> val_pair;
-			signed long integer;
+		union Data {
+			std::pair<ScmValue, ScmValue> *valpair;
+			long integer;
+			double real;
 			bool boolean;
-			std::string str;
+			std::string *str;
 			// and more...
 		} data;
 
 		 ScmValue( );
 		~ScmValue( );
 
-		void set( enum tagged_type tagged, union data new_data );
-		void set( signed long n );
+		void set( std::string *str );
+		void set( enum Tagged tagged, std::string *str );
+		void set( long n );
+		void set( double r );
 		void set( ScmValue val );
+		void set( bool boolean );
+		void set( enum Tagged tagged, union Data new_data );
 		// and so on...
+
+		ScmValue *incRefs( );
+		void     decRefs( );
+		unsigned getRefs( );
+
+	private:
+		unsigned references;
 };
 
 #endif
