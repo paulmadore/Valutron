@@ -7,6 +7,8 @@ void ScmInteger::print () { printf ("%ld", val); }
 
 void ScmBoole::print () { printf ("#%c", val ? 't' : 'f'); }
 
+//void ScmNull::print () { printf( "()" ); }
+
 void ScmPair::print( bool print_first_paren )
 {
     if ( print_first_paren ){
@@ -15,17 +17,22 @@ void ScmPair::print( bool print_first_paren )
 
     if ( val.first ){
         val.first->print( );
-
-    } else {
-        // probably want to throw an error or something here,
-        // this shouldn't happen
-        ;
     }
 
-    if ( val.second || val.second->tag == SCM_NULL ){
+    if ( val.second ){
         if ( val.second->tag == PAIR ){
-            putchar( ' ' );
-            dynamic_cast<ScmPair *>(val.second)->print( false );
+            ScmPair *dat = dynamic_cast<ScmPair *>(val.second);
+
+            // Check to see if it's a null pair
+            if ( dat->val.first && dat->val.second ){
+                // if it's not, print the next pair
+                putchar( ' ' );
+                dynamic_cast<ScmPair *>(val.second)->print( false );
+
+            } else {
+                // And stop printing if it is
+                putchar( ')' );
+            }
 
         } else {
             printf( " . " );

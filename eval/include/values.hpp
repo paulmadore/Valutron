@@ -79,11 +79,10 @@ class ScmBoole : public ScmValue
     void print ();
 };
 
-class ScmNull : public ScmValue
+class ScmNull : public ScmPair
 {
   public:
-    ScmNull () : ScmValue (SCM_NULL) {}
-    void print () { }
+    ScmNull() : ScmPair(NULL, NULL){ };
 };
 
 #endif
