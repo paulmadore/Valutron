@@ -1,4 +1,5 @@
 #include <values.hpp>
+#include <cstdio>
 
 void ScmString::print () { printf ("\"%s\"", val.c_str ()); }
 
@@ -6,29 +7,39 @@ void ScmInteger::print () { printf ("%ld", val); }
 
 void ScmBoole::print () { printf ("#%c", val ? 't' : 'f'); }
 
-void ScmPair::print ()
+void ScmPair::print( bool print_first_paren )
 {
-    ScmValue * dat = this;
-
-    printf ("(");
-    while (true)
-    {
-        dynamic_cast<ScmPair *> (dat)->val.first->print ();
-        if (dynamic_cast<ScmPair *> (dat)->val.second->tag == UNDEF)
-        {
-            printf (")");
-            break;
-        }
-        dat = dynamic_cast<ScmPair *> (dat)->val.second;
-        if (dat->tag != PAIR)
-        {
-            printf (" . ");
-            dat->print ();
-            printf (")");
-            break;
-        }
-        printf (" ");
+    if ( print_first_paren ){
+        putchar( '(' );
     }
+
+    if ( val.first ){
+        val.first->print( );
+
+    } else {
+        // probably want to throw an error or something here,
+        // this shouldn't happen
+        ;
+    }
+
+    if ( val.second || val.second->tag == SCM_NULL ){
+        if ( val.second->tag == PAIR ){
+            putchar( ' ' );
+            dynamic_cast<ScmPair *>(val.second)->print( false );
+
+        } else {
+            printf( " . " );
+            val.second->print( );
+            putchar( ')' );
+        }
+
+    } else {
+        putchar( ')' );
+    }
+}
+
+void ScmPair::print( ){
+    print( true );
 }
 
 // reference counting functions

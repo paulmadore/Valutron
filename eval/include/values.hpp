@@ -51,7 +51,8 @@ class ScmPair : public ScmValue
     ScmPair (ScmValue * one, ScmValue * two) : ScmValue (PAIR), val (one, two)
     {
     }
-    void print ();
+    void print( );
+    void print( bool print_first_paren );
 };
 
 class ScmInteger : public ScmValue
