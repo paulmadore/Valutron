@@ -1,5 +1,6 @@
 %{
 #include <cstring>
+
 #include "evctx.h"
 #include "eval.tab.i"
 #include "eval.tab.h"
@@ -14,13 +15,13 @@ INT10       ("-"?){NUM}+
 LETTER      [a-zA-Z]|"!"|"$"|"%"|"&"|"*"|"+"|"-"|"."|"/"|":"|"<"|"="|">"|"?"|"@"|"^"|"_"|"~"
 IDENTIFIER  (({NUM}|{LETTER})*)
 
+%option bison-bridge bison-locations
+%option extra-type="ScmValue **"
 %option noyywrap
 %option reentrant bison-bridge bison-locations
 %option yylineno
 
 %{
-
-#define YY_EXTRA_TYPE EvalContext *
 
 #define YY_STORE_INT(x) yylval->I = x;
 #define YY_STORE_STR() yylval->C = strdup(yytext);

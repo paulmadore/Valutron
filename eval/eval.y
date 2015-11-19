@@ -33,7 +33,7 @@ typedef void * yyscan_t;
 %%
 
 translunit
-    : s_expr_list { $1->print(); }
+    : s_expr { *evalget_extra(scanner) = $1; }
     | /* ε */
     ;
 
