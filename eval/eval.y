@@ -40,7 +40,7 @@ translunit
 atom
     : STRING_LITERAL { $$ = new ScmString($1); }
     | I_LITERAL      { $$ = new ScmInteger($1); }
-    | IDENTIFIER     { $$ = new ScmString($1); } /* handle identifier differently? */
+    | IDENTIFIER     { $$ = new ScmSymbol($1); } /* handle identifier differently? */
     ;
 
 s_expr

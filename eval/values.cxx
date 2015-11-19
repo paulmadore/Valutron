@@ -3,6 +3,8 @@
 
 void ScmString::print () { printf ("\"%s\"", val.c_str ()); }
 
+void ScmSymbol::print () { printf ("%s", val.c_str ()); }
+
 void ScmInteger::print () { printf ("%ld", val); }
 
 void ScmBoole::print () { printf ("#%c", val ? 't' : 'f'); }

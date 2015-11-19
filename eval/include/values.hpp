@@ -71,6 +71,14 @@ class ScmString : public ScmValue
     void print ();
 };
 
+class ScmSymbol : public ScmValue
+{
+  public:
+    std::string val;
+    ScmSymbol (std::string str) : ScmValue (SYMBOL), val (str) {}
+    void print ();
+};
+
 class ScmBoole : public ScmValue
 {
   public:
