@@ -53,6 +53,31 @@ class ScmPair : public ScmValue
     }
     void print ();
     void print (bool print_first_paren);
+
+    class iterator : public std::iterator<std::forward_iterator_tag, ScmPair *>
+    {
+        ScmPair * iter;
+
+      public:
+        iterator (ScmPair * loc) : iter (loc) {}
+        iterator (const iterator & anIter) : iter (anIter.iter) {}
+
+        iterator & operator++()
+        {
+            /* If this fails, then you are probably trying to go beyond
+             * List boundaries. */
+            iter = dynamic_cast<ScmPair *> (iter->val.second);
+            return *this;
+        }
+        bool operator==(const iterator & rhs) { return iter == rhs.iter; }
+        bool operator!=(const iterator & rhs) { return iter != rhs.iter; }
+        Cons & operator*() { return iter->val; }
+
+        Cons & operator->() { return iter->val; }
+    };
+
+    iterator begin ();
+    iterator end ();
 };
 
 class ScmInteger : public ScmValue
