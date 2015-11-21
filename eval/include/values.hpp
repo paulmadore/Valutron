@@ -1,9 +1,11 @@
 #ifndef _INTERPRETER_VALUES_H
 #define _INTERPRETER_VALUES_H 1
 
+#include <cassert>
+#include <iterator>
 #include <string>
-#include <vector>
 #include <utility>
+#include <vector>
 
 enum ScmType
 {
@@ -54,30 +56,46 @@ class ScmPair : public ScmValue
     void print ();
     void print (bool print_first_paren);
 
+    ScmValue * car () { return val.first; }
+    ScmValue * cdr () { return val.second; }
+
     class iterator : public std::iterator<std::forward_iterator_tag, ScmPair *>
     {
         ScmPair * iter;
 
       public:
+        iterator (int loc)
+        {
+            if (loc < 0)
+                while (iter->val.second->tag == PAIR)
+                    iter = dynamic_cast<ScmPair *> (iter->val.second);
+            else
+                for (int i = 0; i < loc; i++)
+                {
+                    assert (iter->val.second->tag == PAIR);
+                    iter = dynamic_cast<ScmPair *> (iter->val.second);
+                }
+        }
         iterator (ScmPair * loc) : iter (loc) {}
         iterator (const iterator & anIter) : iter (anIter.iter) {}
 
         iterator & operator++()
         {
             /* If this fails, then you are probably trying to go beyond
-             * List boundaries. */
+             * List boundaries. It fails when cdr of a pair is no longer
+             * another pair. */
             iter = dynamic_cast<ScmPair *> (iter->val.second);
             return *this;
         }
+
         bool operator==(const iterator & rhs) { return iter == rhs.iter; }
         bool operator!=(const iterator & rhs) { return iter != rhs.iter; }
         Cons & operator*() { return iter->val; }
-
         Cons & operator->() { return iter->val; }
     };
 
-    iterator begin ();
-    iterator end ();
+    iterator begin () { return iterator (0); }
+    iterator end () { return iterator (-1); }
 };
 
 class ScmInteger : public ScmValue
