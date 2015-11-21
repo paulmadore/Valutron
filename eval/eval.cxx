@@ -43,7 +43,7 @@ int main (int argc, char * argv[])
 
     while (returnValue != 99)
     {
-        ScmValue * input = 0;
+        ScmPair * input = 0;
         std::string prompt ("{ 0 } ok ");
 
         fputs (prompt.c_str (), stdout);
@@ -51,10 +51,10 @@ int main (int argc, char * argv[])
         if (fgets (buffer, sizeof (buffer), stdin) == NULL)
             break;
 
-        input = read (buffer);
+        input = static_cast<ScmPair *> (read (buffer));
         if (input)
         {
-            input->print ();
+            input->evaluate (input)->print ();
             putchar ('\n');
         }
     }

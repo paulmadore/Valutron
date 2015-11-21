@@ -33,9 +33,10 @@ class ScmValue
         references = 1;
     };
     ScmValue (ScmType tagged) : tag (tagged) {}
-    virtual ~ScmValue (){};
+    virtual ~ScmValue () {}
 
-    virtual void print (){};
+    virtual ScmValue * evaluate (class ScmPair * ast) { return this; }
+    virtual void print () {}
 
     ScmValue * incRefs ();
     void decRefs ();
@@ -135,5 +136,7 @@ class ScmNull : public ScmPair
   public:
     ScmNull () : ScmPair (NULL, NULL){};
 };
+
+extern ScmNull * scmNil;
 
 #endif
