@@ -54,7 +54,7 @@ int main (int argc, char * argv[])
         input = static_cast<ScmPair *> (read (buffer));
         if (input)
         {
-            input->evaluate (input)->print ();
+            input->evaluate()->print ();
             putchar ('\n');
         }
     }

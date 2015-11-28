@@ -6,6 +6,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <vm.hpp>
 
 enum ScmType
 {
@@ -19,6 +20,8 @@ enum ScmType
     REAL,
     BOOLEAN,
     SCM_NULL,
+
+	PROCEDURE,
 };
 
 class ScmValue
@@ -35,7 +38,8 @@ class ScmValue
     ScmValue (ScmType tagged) : tag (tagged) {}
     virtual ~ScmValue () {}
 
-    virtual ScmValue * evaluate (class ScmPair * ast) { return this; }
+    virtual ScmValue *compile( ){ return this; }
+    virtual ScmValue *evaluate( ){ return this; }
     virtual void print () {}
 
     ScmValue * incRefs ();
@@ -135,6 +139,16 @@ class ScmNull : public ScmPair
 {
   public:
     ScmNull () : ScmPair (NULL, NULL){};
+};
+
+class ScmProcedure : public ScmValue
+{
+    public:
+        std::vector<std::string> args;
+        std::vector<VMOpcode>    bytecode;
+        ScmProcedure () : ScmValue (PROCEDURE) {};
+
+        void print ();
 };
 
 extern ScmNull * scmNil;
