@@ -1,7 +1,6 @@
 #include <cstdio>
 
 #include "values.h"
-#include "vmop.h"
 
 static ScmNull scmNil;
 
@@ -63,8 +62,3 @@ void ScmCell::print (bool print_first_paren)
 }
 
 void ScmCell::print () { print (true); }
-
-ScmPrimitive::ScmPrimitive (Type prim) : primType (prim)
-{
-    vmOp1 = VmOperation::Ptr (new VmBuiltin (primType));
-}

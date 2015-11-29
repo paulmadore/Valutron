@@ -3,7 +3,6 @@
  * Copyright (c) 2015 D. Mackay. All rights reserved. */
 
 #include "values.h"
-#include "vmop.h"
 
 std::map<ScmPrimitive::Type, ScmPrimitive::PrimPtr> ScmPrimitive::prims;
 bool ScmPrimitive::initialised = false;
