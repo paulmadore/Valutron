@@ -8,7 +8,12 @@
 #include "eval.tab.i"
 #include "eval.tab.h"
 
-void evalerror(YYLTYPE loc, yyscan_t yyscanner, const char *s);
+/* Silence compiler warnings relating to redefinition of macros by Lex
+ * after Yacc has already defined them. */
+#undef yylval
+#undef yylloc
+
+void evalerror (YYLTYPE loc, yyscan_t yyscanner, const char *s);
 %}
 
 ES          (\\(['"\?\\abfnrtv]|[0-7]{1,3}|x[a-fA-F0-9]+))
@@ -52,14 +57,14 @@ IDENTIFIER  (({NUM}|{LETTER})*)
 
 %%
 
-(\"([^"\\\n]|{ES})*\"{WS}*)+        { YY_STORE_STR(); return STRING_LITERAL; }
+(\"([^"\\\n]|{ES})*\"{WS}*)+        { YY_STORE_STR (); return STRING_LITERAL; }
 
-"#t"                                { YY_STORE_INT(1); return BOOLE; }
-"#f"                                { YY_STORE_INT(0); return BOOLE; }
+"#t"                                { YY_STORE_INT (1); return BOOLE; }
+"#f"                                { YY_STORE_INT (0); return BOOLE; }
 
-"("                                 { YY_STORE_STR(); return '('; }
-")"                                 { YY_STORE_STR(); return ')'; }
-"."                                 { YY_STORE_STR(); return '.'; }
+"("                                 { YY_STORE_STR (); return '('; }
+")"                                 { YY_STORE_STR (); return ')'; }
+"."                                 { YY_STORE_STR (); return '.'; }
 
 "\\'"                               { return ESCQUOTE; }
 "'"                                 { return QUOTE; }
@@ -70,20 +75,23 @@ IDENTIFIER  (({NUM}|{LETTER})*)
 
 
 {INT10}                             {
-                                        YY_STORE_INT(strtol(yytext, 0, 10));
+                                        YY_STORE_INT (strtol (yytext, 0, 10));
                                         return I_LITERAL;
                                     }
 
-{IDENTIFIER}                        { YY_STORE_STR(); return IDENTIFIER; }
+{IDENTIFIER}                        { YY_STORE_STR (); return IDENTIFIER; }
 
 {WS}*                               { ; }
-.                                   { printf("<%s>\n", yytext); evalerror (*yylloc, yyg, "unrecognised token"); }
+.                                   { printf ("<%s>\n", yytext); evalerror (*yylloc, yyg, "unrecognised token"); }
 
 %%
 
 #include <stdio.h>
 #include "scanner.yy.h"
 #include "misc.h"
+
+/* Silence compiler warnings relating to unused functions. */
+void * unused = reinterpret_cast<void*> (&yyunput);
 
 void evalerror(YYLTYPE loc, yyscan_t yyscanner, const char *s)
 {

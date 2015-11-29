@@ -52,7 +52,7 @@ class ScmValue : public std::enable_shared_from_this<ScmValue>
     /* `compile` will emplace VmOperations on the specified vector.
      * This will typically be the code vector of the current lambda
      * being compiled. */
-    virtual void compile (VmOpVec & vec){};
+    virtual void compile (VmOpVec & vec);
 
     virtual void print (){};
     virtual void deleteAll () { delete this; }
@@ -242,11 +242,13 @@ class ScmPrimitive : public ScmFunction
 
 class ScmLambda : public ScmFunction
 {
-  protected:
-    std::vector<std::unique_ptr<VmOpPtr> > code;
-
   public:
-    ScmLambda (std::string name, ScmCell::Ptr contents);
+    typedef std::shared_ptr<ScmLambda> FuncPtr;
+
+    std::string name;
+    VmOpVec code;
+
+    ScmLambda (std::string funcname) : name (funcname) {}
 };
 
 ScmValue::Ptr makeScmNil ();

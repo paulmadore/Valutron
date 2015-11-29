@@ -14,6 +14,6 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}
 
 add_executable (eval automgr/automgr.cxx eval.cxx vm/vm.cxx vm/vmop.cxx
                 type/builtin.cxx type/values.cxx
-                compile/cbuiltin.cxx compile/compile.cxx
+                compile/comptype.cxx compile/compile.cxx
                 ${PROJECT_BINARY_DIR}/scanner.yy.cxx
                 ${PROJECT_BINARY_DIR}/eval.tab.cxx)

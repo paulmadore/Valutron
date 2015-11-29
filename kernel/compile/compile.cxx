@@ -22,5 +22,8 @@ void ScmCell::compile (VmOperation::Vec & vec)
 
 ScmFunction::Ptr scmCompile (ScmCell::CellPtr list)
 {
-    ScmFunction::Ptr newProc = ScmFunction::Ptr (new ScmFunction);
+    ScmLambda::FuncPtr newProc =
+        ScmLambda::FuncPtr (new ScmLambda ("-interactive-"));
+    list->compile (newProc->code);
+    return newProc;
 }
