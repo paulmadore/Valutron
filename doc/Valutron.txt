@@ -1,0 +1,26 @@
+VALUTRON
+ACCELERATING SCHEME AND ENABLING FIRST-CLASS CONTINUATIONS THROUGH TRANSLATION
+TO A FORTH INTERMEDIATE FORM
+
+D. Mackay, 2015
+
+1. Abstract
+This article describes the design of an interpreter for Scheme, a programming language in the Lisp family, using a virtual machine called Valutron in place of the direct evaluation of ASTs (abstract syntax trees.)
+The interpreter first translates ASTs into their equivalent representation for the Valutron VM, which implements a modified Forth system, and then allows Valutron to execute the resultant expressions.
+
+2. Motivation
+Being designed directly on the basis of the Lambda Calculus (McCarthy, 1960), Lisp-family languages use as their fundamental building block the function. Scheme is no exception. It is imperative that any implementation be able to deal with functions that may recursively call themselves a great deal, as this is the idiomatic technique for the implementation of recursion. This poses a problem for an implementation in C++; specifically, C++ does not specify that tail-call optimisation is required in an implementation (ISO/IEC 14882:2014). Tail-call optimisation involves the reuse of the extant stack frame for a function, rather than allocating a new one, in cases where the tail call is the final expression to be evaluated in a function.
+
+Additionally, Scheme provides a function known as call-with-current-continuation, or call/cc in short (Sperber et al, 2007, s. 1.11). Call/cc passes the current 'continuation' - which can be understood as the thread of execution defined by the call stack - to a function, which may then store it. That continuation may then be resumed later. This facility is extremely powerful, and again poses a problem for C++, as there is no effective portable technique for saving the current continuation in C++. setjmp() and longjmp() may appear to offer a solution, but the use of these requires very careful consideration of their side effects with regard to memory management, and additionally they can only allow resumption of a continuation that falls into an earlier position on the call stack (ISO/IEC 9899:2011 s. 7.13), whereas Scheme explicitly permits the resumption of a continuation at any location (Sperber et al, 2007, s. A.10).
+
+My interest was in trying to find a way to solve this twin dilemma. Various possibilities were investigated, including the aforementioned unportable copying of the C stack and the use of the continuation-passing style. After reading Cheney on the MTA (Baker, 1995,) which describes a technique using a 'tramopoline' that ensures all calls to evaluate Scheme code would be made at an early position in the stack, I realised that significant potential laid in the Forth machine model.
+
+3. The Forth machine
+Forth is a programming language developed by Charles H. Moore.
+
+References:
+McCarthy, J. (1960). Recursive Functions of Symbolic Expressions and Their Computation by Machine, Part I. Communications of the ACM, 3, 184-195 (April 1960).
+ISO/IEC. (2014). ISO International Standard ISO/IEC 14882:2014 – Programming Language C++. [Working draft]. Geneva, Switzerland: International Organization for Standardization (ISO). URL: https://isocpp.org/std/the-standard (Retrieved 26th November 2015).
+Sperber, M.; Dybvig, R. K.; Flatt, M.; Van Straaten, A.; et al. (2007). "Revised (6) Report on the Algorithmic Language Scheme (R6RS)". Scheme Steering Committee. URL: http://www.r6rs.org/final/html/r6rs/r6rs.html (Retrieved 25th November 2015).
+ISO/IEC. (2011). ISO International Standard ISO/IEC 9899:2011 – Programming Language C. Geneva, Switzerland: International Organization for Standardization (ISO). URL: http://www.iso.org/iso/iso_catalogue/catalogue_tc/catalogue_detail.htm?csnumber=57853 (Retrieved 26th November 2015).
+Baker, H.G. (1995) CONS should not CONS its arguments, part II: Cheney on the M.T.A. ACM SIGPLAN Notices, 30(9):17-20 (September 1995).

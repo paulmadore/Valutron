@@ -1,12 +1,11 @@
 #include <cstdio>
 #include <fstream>
-#include <values.hpp>
 
 #include "eval.tab.i"
 #include "eval.tab.h"
-#include "eval.yy.h"
+#include "compile.h"
 
-ScmValue * read (const char * text)
+ScmValue::Ptr read (const char * text)
 {
     /* The ScmValue that we parse from this text.*/
     ScmValue * result = 0;
@@ -33,7 +32,7 @@ ScmValue * read (const char * text)
     eval_delete_buffer (yybuffer, scanner);
     /* And, finally, destroy this scanner. */
     evallex_destroy (scanner);
-    return result;
+    return ScmValue::Ptr (result);
 }
 
 int main (int argc, char * argv[])
@@ -43,7 +42,7 @@ int main (int argc, char * argv[])
 
     while (returnValue != 99)
     {
-        ScmPair * input = 0;
+        ScmValue::Ptr input;
         std::string prompt ("{ 0 } ok ");
 
         fputs (prompt.c_str (), stdout);
@@ -51,10 +50,10 @@ int main (int argc, char * argv[])
         if (fgets (buffer, sizeof (buffer), stdin) == NULL)
             break;
 
-        input = static_cast<ScmPair *> (read (buffer));
+        input = read (buffer);
         if (input)
         {
-            input->evaluate (input)->print ();
+            input->print ();
             putchar ('\n');
         }
     }

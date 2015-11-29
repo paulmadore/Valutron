@@ -1,7 +1,10 @@
+/* Valutron
+ * Parser (Scanner component)
+ * Copyright (c) 2015 D. Mackay. All rights reserved. */
+
 %{
 #include <cstring>
 
-#include "evctx.h"
 #include "eval.tab.i"
 #include "eval.tab.h"
 
@@ -16,9 +19,10 @@ LETTER      [a-zA-Z]|"!"|"$"|"%"|"&"|"*"|"+"|"-"|"."|"/"|":"|"<"|"="|">"|"?"|"@"
 IDENTIFIER  (({NUM}|{LETTER})*)
 
 %option bison-bridge bison-locations
-%option extra-type="ScmValue **"
+%option extra-type="class ScmValue **"
 %option noyywrap
-%option reentrant bison-bridge bison-locations
+%option prefix="eval"
+%option reentrant
 %option yylineno
 
 %{
@@ -78,7 +82,7 @@ IDENTIFIER  (({NUM}|{LETTER})*)
 %%
 
 #include <stdio.h>
-#include "eval.yy.h"
+#include "scanner.yy.h"
 #include "misc.h"
 
 void evalerror(YYLTYPE loc, yyscan_t yyscanner, const char *s)

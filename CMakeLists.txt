@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 2.4)
-project (pprproc)
+project (valutron)
 
 find_package(FLEX)
 
@@ -12,8 +12,8 @@ GET_FILENAME_COMPONENT (file ${path} NAME_WE)
 add_custom_command(
 OUTPUT ${PROJECT_BINARY_DIR}/${file}.yy.h ${PROJECT_BINARY_DIR}/${file}.yy.cxx 
 COMMAND ${FLEX_EXECUTABLE}
-ARGS -o${PROJECT_BINARY_DIR}/${file}.yy.cxx -P ${file}
-	--header-file=${PROJECT_BINARY_DIR}/${file}.yy.h
+ARGS -o${PROJECT_BINARY_DIR}/${file}.yy.cxx
+    --header-file=${PROJECT_BINARY_DIR}/${file}.yy.h
     ${path}
 DEPENDS ${path}
 )
@@ -32,4 +32,4 @@ MAIN_DEPENDENCY ${path}
 )
 endfunction (BtYaccComp)
 
-add_subdirectory (eval)
+add_subdirectory (kernel)

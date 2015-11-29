@@ -1,5 +1,5 @@
 %{
-#include "values.hpp"
+#include "values.h"
 
 typedef void * yyscan_t;
 %}
@@ -18,6 +18,11 @@ typedef void * yyscan_t;
 }
 
 %destructor { if ($$) { free ($$); $$ = NULL; } } <C>
+%destructor {
+    if ($$ && !dynamic_cast<ScmNull *>($$))
+        $$->deleteAll();
+    $$ = NULL;
+    } <scm>
 
  //         "'"   "#'"       "`"       "\'"
 %token <V> QUOTE SHARPQUOTE BACKQUOTE ESCQUOTE
@@ -30,17 +35,30 @@ typedef void * yyscan_t;
 
 %start translunit
 
+%{
+#ifndef FLEX_SCANNER
+typedef struct YYLTYPE YYLTYPE;
+#include "scanner.yy.h"
+#endif
+%}
+
 %%
 
 translunit
-    : s_expr { *evalget_extra(scanner) = $1; }
-    | /* ε */
+    : s_expr  { *evalget_extra(scanner) = $1; }
+    | /* ε */ { *evalget_extra(scanner) = NULL; }
     ;
 
 atom
-    : STRING_LITERAL { $$ = new ScmString($1); }
+    : STRING_LITERAL
+    {
+        std::string lit($1);
+        lit.erase(lit.find_last_not_of(" \t\v\n\r\f") + 1);
+        $$ = new ScmString(lit);
+        free ($1);
+    }
     | I_LITERAL      { $$ = new ScmInteger($1); }
-    | IDENTIFIER     { $$ = new ScmSymbol($1); } /* handle identifier differently? */
+    | IDENTIFIER     { $$ = new ScmSymbol($1); free ($1); }
     ;
 
 s_expr
@@ -49,9 +67,9 @@ s_expr
     ;
 
 s_expr_list
-    : s_expr             { $$ = new ScmPair($1, new ScmNull( )); }
-    | s_expr '.' s_expr  { $$ = new ScmPair($1, $3); }
-    | s_expr s_expr_list { $$ = new ScmPair($1, $2); }
+    : s_expr             { $$ = new ScmCell(ScmValue::Ptr($1), makeScmNil()); }
+    | s_expr '.' s_expr  { $$ = new ScmCell($1, $3); }
+    | s_expr s_expr_list { $$ = new ScmCell($1, $2); }
     ;
 
 list
@@ -64,6 +82,6 @@ list
 
 %%
 
-#include "eval.yy.h"
+#include "scanner.yy.h"
 
 void evalerror(YYLTYPE loc, yyscan_t yyscanner, const char *s);

@@ -1,5 +1,14 @@
-#include <values.hpp>
 #include <cstdio>
+
+#include "values.h"
+#include "vmop.h"
+
+static ScmNull scmNil;
+
+ScmValue::Ptr makeScmNil ()
+{
+    return ScmValue::Ptr (ScmValue::Ptr (), &scmNil);
+}
 
 void ScmString::print () { printf ("%s", val.c_str ()); }
 
@@ -9,9 +18,7 @@ void ScmInteger::print () { printf ("%ld", val); }
 
 void ScmBoole::print () { printf ("#%c", val ? 't' : 'f'); }
 
-// void ScmNull::print () { printf( "()" ); }
-
-void ScmPair::print (bool print_first_paren)
+void ScmCell::print (bool print_first_paren)
 {
     if (print_first_paren)
     {
@@ -25,16 +32,16 @@ void ScmPair::print (bool print_first_paren)
 
     if (val.second)
     {
-        if (val.second->tag == PAIR)
+        if (val.second->tag == CELL)
         {
-            ScmPair * dat = dynamic_cast<ScmPair *> (val.second);
+            CellPtr dat = AsPtr (Cell, val.second);
 
             // Check to see if it's a null pair
             if (dat->val.first && dat->val.second)
             {
                 // if it's not, print the next pair
                 putchar (' ');
-                dynamic_cast<ScmPair *> (val.second)->print (false);
+                AsPtr (Cell, val.second)->print (false);
             }
             else
             {
@@ -55,20 +62,9 @@ void ScmPair::print (bool print_first_paren)
     }
 }
 
-void ScmPair::print () { print (true); }
+void ScmCell::print () { print (true); }
 
-// reference counting functions
-
-// incRefs returns a pointer to the current class to make reasoning about
-// reference incrementing on assignment a bit easier.
-// e.g:
-//   ScmValue *some_reference = another_value.incRefs( );
-ScmValue * ScmValue::incRefs ()
+ScmPrimitive::ScmPrimitive (Type prim) : primType (prim)
 {
-    references++;
-    return this;
+    vmOp1 = VmOperation::Ptr (new VmBuiltin (primType));
 }
-
-void ScmValue::decRefs () { references--; }
-
-unsigned ScmValue::getRefs () { return references; }
